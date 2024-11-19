@@ -74,6 +74,11 @@ const ShareScreen = () => {
   };
 
   const handleShare = () => {
+    if (selectedUsers.length === 0) {
+        alert('Please select at least one user to share the topic with.');
+        return;
+    }
+
     alert(
       `Topic ${topicId} shared with: ${mockUsers
         .filter((user) => selectedUsers.includes(user.id))
