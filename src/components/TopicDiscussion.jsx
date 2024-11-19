@@ -181,6 +181,7 @@ const styles = {
     textAlign: 'center',
   },
   shareButton: {
+    display: 'inline-block',
     padding: '8px 16px',
     backgroundColor: '#2196F3',
     color: '#fff',
@@ -188,6 +189,7 @@ const styles = {
     borderRadius: '5px',
     fontSize: '14px',
     cursor: 'pointer',
+    marginBottom: '16px',
   },
   commentsContainer: {
     marginBottom: '16px',
