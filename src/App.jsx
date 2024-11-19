@@ -4,6 +4,8 @@ import Home from './components/Home';
 import CreateTopic from './components/CreateTopic';
 import TopicDiscussion from './components/TopicDiscussion';
 import Notifications from './components/Notifications';
+import ShareScreen from './components/ShareScreen';
+
 
 const App = () => {
   const routes = useRoutes([
@@ -11,6 +13,7 @@ const App = () => {
     { path: '/create-topic', element: <CreateTopic /> },
     { path: '/discussion/:topicId', element: <TopicDiscussion /> },
     { path: '/notifications', element: <Notifications /> },
+    { path: '/share/:topicId', element: <ShareScreen /> },
   ]);
 
   return (

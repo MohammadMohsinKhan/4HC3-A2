@@ -1,66 +1,93 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
+const styles = {
+  container: {
+    padding: '16px',
+    fontFamily: 'Arial, sans-serif',
+    backgroundColor: '#f9f9f9',
+    minHeight: '100vh',
+  },
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '20px',
+  },
+  title: {
+    fontSize: '24px',
+    color: '#333',
+  },
+  notificationsIcon: {
+    fontSize: '20px',
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer',
+  },
+  createButton: {
+    padding: '10px 20px',
+    backgroundColor: '#4CAF50',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '5px',
+    fontSize: '16px',
+    cursor: 'pointer',
+    marginBottom: '20px',
+  },
+  topicList: {
+    listStyle: 'none',
+    padding: 0,
+  },
+  topicItem: {
+    padding: '15px',
+    marginBottom: '10px',
+    borderRadius: '8px',
+    backgroundColor: '#fff',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+  },
+  viewButton: {
+    padding: '8px 16px',
+    backgroundColor: '#2196F3',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '5px',
+    fontSize: '14px',
+    cursor: 'pointer',
+  },
+};
+
 const Home = () => {
   const navigate = useNavigate();
   const topics = [
-    { id: 1, title: 'Weekend Trip Destination', status: 'Ongoing' },
-    { id: 2, title: 'Project Theme', status: 'Finalized' },
+    { id: 1, title: 'Weekend Trip', status: 'Ongoing' },
+    { id: 2, title: 'Project Deadline', status: 'Finalized' },
   ];
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h1 style={{ color: '#333', marginBottom: '20px' }}>Group Decision-Making</h1>
+    <div style={styles.container}>
+      <header style={styles.header}>
+        <h1 style={styles.title}>Group Decision-Making</h1>
+        <button
+          onClick={() => navigate('/notifications')}
+          style={styles.notificationsIcon}
+        >
+          🔔
+        </button>
+      </header>
       <button
-        type="button"
         onClick={() => navigate('/create-topic')}
-        style={{
-          padding: '10px 20px',
-          backgroundColor: '#4CAF50',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '5px',
-          cursor: 'pointer',
-          fontSize: '16px',
-        }}
+        style={styles.createButton}
       >
         + Create New Topic
       </button>
-      <ul
-        style={{
-          listStyle: 'none',
-          padding: 0,
-          marginTop: '20px',
-          borderTop: '1px solid #ddd',
-        }}
-      >
+      <ul style={styles.topicList}>
         {topics.map((topic) => (
-          <li
-            key={topic.id}
-            style={{
-              padding: '15px 10px',
-              borderBottom: '1px solid #ddd',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
-            <div>
-              <h3 style={{ margin: 0, color: '#333' }}>{topic.title}</h3>
-              <p style={{ margin: '5px 0', color: '#666' }}>Status: {topic.status}</p>
-            </div>
+          <li key={topic.id} style={styles.topicItem}>
+            <h3>{topic.title}</h3>
+            <p>Status: {topic.status}</p>
             <button
-              type="button"
               onClick={() => navigate(`/discussion/${topic.id}`)}
-              style={{
-                padding: '8px 16px',
-                backgroundColor: '#2196F3',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '5px',
-                cursor: 'pointer',
-                fontSize: '14px',
-              }}
+              style={styles.viewButton}
             >
               View
             </button>

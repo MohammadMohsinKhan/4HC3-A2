@@ -3,6 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "description": "Opinionated Vite starter template with ESLint, Prettier, Stylelint and more.",
+  "homepage": "https://mohammadmohsinkhan.github.io/4HC3-A2/",
   "repository": {
     "type": "git",
     "url": "https://github.com/fabgrel10/vite-react-starter"
