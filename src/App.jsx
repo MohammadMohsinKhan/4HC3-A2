@@ -1,22 +1,42 @@
-import logo from './assets/images/logo.svg';
+import React from 'react';
+import { useRoutes } from 'react-router-dom';
+import Home from './components/Home';
+import CreateTopic from './components/CreateTopic';
+import TopicDiscussion from './components/TopicDiscussion';
+import Notifications from './components/Notifications';
 
-function App() {
+const App = () => {
+  const routes = useRoutes([
+    { path: '/', element: <Home /> },
+    { path: '/create-topic', element: <CreateTopic /> },
+    { path: '/discussion/:topicId', element: <TopicDiscussion /> },
+    { path: '/notifications', element: <Notifications /> },
+  ]);
+
   return (
-    <div className="app">
-      <header className="app-header">
-        <img src={logo} className="app-logo" alt="logo" />
-        <p className="header">Vite React Starter 💯</p>
-        <p>
-          Vite + React <br />
-          ESLint + Prettier + Stylelint
-          <br />
-          Sass + Emotion + Tailwind
-          <br />
-          Jest + Testing Library
-        </p>
-      </header>
+    <div
+      style={{
+        fontFamily: 'Arial, sans-serif',
+        backgroundColor: '#f9f9f9',
+        minHeight: '100vh',
+        padding: '20px',
+        boxSizing: 'border-box',
+      }}
+    >
+      <div
+        style={{
+          maxWidth: '800px',
+          margin: '0 auto',
+          backgroundColor: '#fff',
+          borderRadius: '8px',
+          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+          overflow: 'hidden',
+        }}
+      >
+        {routes}
+      </div>
     </div>
   );
-}
+};
 
 export default App;
