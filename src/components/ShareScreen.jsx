@@ -108,11 +108,11 @@ const ShareScreen = () => {
         ))}
       </ul>
       <div style={styles.actions}>
+      <button onClick={() => navigate(-1)} style={styles.cancelButton}>
+          Cancel
+        </button>
         <button onClick={handleShare} style={styles.shareButton}>
           Share
-        </button>
-        <button onClick={() => navigate(-1)} style={styles.cancelButton}>
-          Cancel
         </button>
       </div>
     </div>

@@ -15,13 +15,11 @@ const styles = {
     marginBottom: '20px',
   },
   title: {
-    fontSize: '24px',
+    fontSize: '20px',
     color: '#333',
   },
   notificationsIcon: {
     fontSize: '20px',
-    background: 'none',
-    border: 'none',
     cursor: 'pointer',
   },
   createButton: {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import BackButton from '../components/BackButton'; // Assume BackButton is a reusable component
+import BackButton from '../components/BackButton';
 
 const TopicDiscussion = () => {
   const { topicId } = useParams();
@@ -14,7 +14,10 @@ const TopicDiscussion = () => {
       comments: [
         { id: 1, author: "Alice", option: "Beach", content: "I love the beach!", timestamp: "Nov 18, 2024" },
         { id: 2, author: "Bob", option: "Mountains", content: "The mountains are so peaceful.", timestamp: "Nov 18, 2024" },
+        { id: 3, author: "Charlie", option: "Beach", content: "Beach is the best!", timestamp: "Nov 18, 2024" },
       ],
+      status: "Ongoing", // Can be "Ongoing" or "Finalized"
+      finalizedOption: null,
     },
     "2": {
       title: 'Project Theme',
@@ -35,15 +38,21 @@ const TopicDiscussion = () => {
           timestamp: '2:15 PM',
         },
       ],
+      status: 'Finalized',
+      finalizedOption: 'AI',
     },
   };
 
   const topic = mockTopics[topicId];
 
-  // State to manage comments
+  // States for managing comments, new comments, and discussion state
   const [comments, setComments] = useState(topic?.comments || []);
   const [newComment, setNewComment] = useState("");
   const [selectedOption, setSelectedOption] = useState("");
+  const [status, setStatus] = useState(topic?.status || "Ongoing");
+  const [finalizedOption, setFinalizedOption] = useState(topic?.finalizedOption || null);
+
+  const [showFinalizeModal, setShowFinalizeModal] = useState(false);
 
   if (!topic) {
     return (
@@ -62,17 +71,37 @@ const TopicDiscussion = () => {
 
     const newCommentObject = {
       id: comments.length + 1,
-      author: "You", // Mock author
+      author: "You",
       option: selectedOption,
       content: newComment,
       timestamp: new Date().toLocaleString(),
     };
 
-    // Update comments state
     setComments([newCommentObject, ...comments]);
-    setNewComment(""); // Clear input
-    setSelectedOption(""); // Clear selected option
+    setNewComment("");
+    setSelectedOption("");
   };
+
+  const calculateMetrics = () => {
+    const count = {};
+    comments.forEach((comment) => {
+      count[comment.option] = (count[comment.option] || 0) + 1;
+    });
+
+    const mostChosen = Object.entries(count).sort((a, b) => b[1] - a[1])[0];
+    return {
+      count,
+      mostChosenOption: mostChosen ? mostChosen[0] : null,
+    };
+  };
+
+  const handleFinalize = (option) => {
+    setFinalizedOption(option);
+    setStatus("Finalized");
+    setShowFinalizeModal(false);
+  };
+
+  const metrics = calculateMetrics();
 
   return (
     <div style={styles.container}>
@@ -88,8 +117,22 @@ const TopicDiscussion = () => {
         </div>
         <h1 style={styles.title}>{topic.title}</h1>
       </header>
+
+      {/* Status Display */}
+      <div style={styles.statusContainer}>
+        <p style={styles.statusText}>
+          Status: <strong>{status}</strong>
+        </p>
+        {status === "Finalized" && finalizedOption && (
+          <p style={styles.finalizedText}>
+            Finalized Option: <strong>{finalizedOption}</strong>
+          </p>
+        )}
+      </div>
+
+      {/* Options Display */}
       <div style={styles.optionsContainer}>
-        <h3 style={styles.subheader}>Available Options:</h3>
+        <h3 style={styles.optionsTitle}>Options:</h3>
         <ul style={styles.optionsList}>
           {topic.options.map((option, index) => (
             <li key={index} style={styles.optionItem}>
@@ -98,6 +141,18 @@ const TopicDiscussion = () => {
           ))}
         </ul>
       </div>
+
+      {/* Finalize Button */}
+      {status === "Ongoing" && (
+        <button
+          style={styles.finalizeButton}
+          onClick={() => setShowFinalizeModal(true)}
+        >
+          Finalize Discussion
+        </button>
+      )}
+
+      {/* Comment Input */}
       <div style={styles.inputContainer}>
         <input
           type="text"
@@ -124,6 +179,8 @@ const TopicDiscussion = () => {
           Send
         </button>
       </div>
+
+      {/* Comments List */}
       <div style={styles.commentsContainer}>
         <h3 style={styles.subheader}>Comments:</h3>
         {comments.map((comment) => (
@@ -137,6 +194,35 @@ const TopicDiscussion = () => {
           </div>
         ))}
       </div>
+
+      {/* Finalize Modal */}
+      {showFinalizeModal && (
+        <div style={styles.modal}>
+          <h2>Finalize Discussion</h2>
+          <p>
+            Most chosen option:{" "}
+            <strong>{metrics.mostChosenOption || "No comments yet"}</strong>
+          </p>
+          <ul style={styles.modalOptions}>
+            {topic.options.map((option, index) => (
+              <li key={index}>
+                <button
+                  style={styles.modalOptionButton}
+                  onClick={() => handleFinalize(option)}
+                >
+                  Finalize with "{option}"
+                </button>
+              </li>
+            ))}
+          </ul>
+          <button
+            style={styles.closeModalButton}
+            onClick={() => setShowFinalizeModal(false)}
+          >
+            Cancel
+          </button>
+        </div>
+      )}
     </div>
   );
 };
@@ -252,6 +338,68 @@ const styles = {
     borderRadius: '4px',
     fontSize: '14px',
     cursor: 'pointer',
+  },
+  finalizeButton: {
+    padding: '10px 16px',
+    backgroundColor: '#FF9800',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+    fontSize: '14px',
+    cursor: 'pointer',
+    margin: '10px 0',
+  },
+  statusContainer: {
+    marginBottom: '16px',
+    padding: '12px',
+    backgroundColor: '#fff',
+    borderRadius: '8px',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+  },
+  statusText: {
+    fontSize: '14px',
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  finalizedText: {
+    fontSize: '14px',
+    color: '#4CAF50',
+  },
+  modal: {
+    position: 'fixed',
+    top: '20%',
+    left: '50%',
+    transform: 'translate(-50%, -20%)',
+    backgroundColor: '#fff',
+    padding: '20px',
+    borderRadius: '8px',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+    zIndex: 1000,
+  },
+  modalOptions: {
+    listStyleType: 'none',
+    padding: 0,
+    margin: '10px 0',
+  },
+  modalOptionButton: {
+    padding: '8px 16px',
+    backgroundColor: '#2196F3',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+    fontSize: '14px',
+    cursor: 'pointer',
+    marginBottom: '8px',
+  },
+  closeModalButton: {
+    padding: '8px 16px',
+    backgroundColor: '#f44336',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+    fontSize: '14px',
+    cursor: 'pointer',
+    marginTop: '12px',
   },
 };
 
