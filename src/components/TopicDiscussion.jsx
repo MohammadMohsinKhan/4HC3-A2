@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import BackButton from '../components/BackButton';
 
@@ -6,62 +6,35 @@ const TopicDiscussion = () => {
   const { topicId } = useParams();
   const navigate = useNavigate();
 
-  // Mock topic data
-  const mockTopics = {
-    "1": {
-      title: "Weekend Trip Destination",
-      options: ["Beach", "Mountains", "City"],
-      comments: [
-        { id: 1, author: "Alice", option: "Beach", content: "I love the beach!", timestamp: "Nov 18, 2024" },
-        { id: 2, author: "Bob", option: "Mountains", content: "The mountains are so peaceful.", timestamp: "Nov 18, 2024" },
-        { id: 3, author: "Charlie", option: "Beach", content: "Beach is the best!", timestamp: "Nov 18, 2024" },
-      ],
-      status: "Ongoing", // Can be "Ongoing" or "Finalized"
-      finalizedOption: null,
-    },
-    "2": {
-      title: 'Project Theme',
-      options: ['AI', 'Blockchain', 'Cybersecurity'],
-      comments: [
-        {
-          id: 1,
-          author: 'Diana',
-          option: 'AI',
-          content: 'AI is cutting-edge and has many use cases!',
-          timestamp: '2:00 PM',
-        },
-        {
-          id: 2,
-          author: 'Eve',
-          option: 'Cybersecurity',
-          content: 'Cybersecurity is essential in today’s digital world.',
-          timestamp: '2:15 PM',
-        },
-      ],
-      status: 'Finalized',
-      finalizedOption: 'AI',
-    },
-  };
+  const topics = JSON.parse(localStorage.getItem("topics"));
+  const topic = topics.find((t) => parseInt(t.id, 10) === parseInt(topicId, 10));
 
-  const topic = mockTopics[topicId];
-
-  // States for managing comments, new comments, and discussion state
-  const [comments, setComments] = useState(topic?.comments || []);
+  const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [selectedOption, setSelectedOption] = useState("");
   const [status, setStatus] = useState(topic?.status || "Ongoing");
-  const [finalizedOption, setFinalizedOption] = useState(topic?.finalizedOption || null);
-
+  const [finalizedOption, setFinalizedOption] = useState(topic?.finalOption || null);
   const [showFinalizeModal, setShowFinalizeModal] = useState(false);
 
-  if (!topic) {
-    return (
-      <div style={styles.container}>
-        <BackButton />
-        <h1 style={styles.header}>Topic Not Found</h1>
-      </div>
-    );
-  }
+  // Load comments from localStorage or pre-fill with default
+  useEffect(() => {
+    const storedData = JSON.parse(localStorage.getItem("topicComments")) || {};
+    const topicComments = storedData[topicId];
+    
+    if (topicComments) {
+      setComments(topicComments);
+    } else {
+      const defaultComments = topic?.comments || [];
+      updateLocalStorage(topicId, defaultComments);
+      setComments(defaultComments);
+    }
+  }, [topicId, topic]);
+
+  const updateLocalStorage = (id, updatedComments) => {
+    const storedData = JSON.parse(localStorage.getItem("topicComments")) || {};
+    storedData[id] = updatedComments;
+    localStorage.setItem("topicComments", JSON.stringify(storedData));
+  };
 
   const handleAddComment = () => {
     if (!newComment.trim() || !selectedOption) {
@@ -77,9 +50,31 @@ const TopicDiscussion = () => {
       timestamp: new Date().toLocaleString(),
     };
 
-    setComments([newCommentObject, ...comments]);
+    const updatedComments = [newCommentObject, ...comments];
+    setComments(updatedComments);
     setNewComment("");
     setSelectedOption("");
+    updateLocalStorage(topicId, updatedComments);
+  };
+
+  const handleFinalize = (option) => {
+    // Update the finalized option and status in the component state
+    setFinalizedOption(option);
+    setStatus("Finalized");
+    setShowFinalizeModal(false);
+  
+    // Retrieve current topics from localStorage
+    const storedTopics = JSON.parse(localStorage.getItem("topics")) || [];
+  
+    // Find the topic being finalized and update its status
+    const updatedTopics = storedTopics.map((t) =>
+      t.title === topic.title
+        ? { ...t, status: "Finalized", finalOption: option }
+        : t
+    );
+  
+    // Save the updated topics back to localStorage
+    localStorage.setItem("topics", JSON.stringify(updatedTopics));
   };
 
   const calculateMetrics = () => {
@@ -95,11 +90,14 @@ const TopicDiscussion = () => {
     };
   };
 
-  const handleFinalize = (option) => {
-    setFinalizedOption(option);
-    setStatus("Finalized");
-    setShowFinalizeModal(false);
-  };
+  if (!topic) {
+    return (
+      <div style={styles.container}>
+        <BackButton />
+        <h1 style={styles.header}>Topic Not Found</h1>
+      </div>
+    );
+  }
 
   const metrics = calculateMetrics();
 
@@ -118,7 +116,6 @@ const TopicDiscussion = () => {
         <h1 style={styles.title}>{topic.title}</h1>
       </header>
 
-      {/* Status Display */}
       <div style={styles.statusContainer}>
         <p style={styles.statusText}>
           Status: <strong>{status}</strong>
@@ -130,7 +127,6 @@ const TopicDiscussion = () => {
         )}
       </div>
 
-      {/* Options Display */}
       <div style={styles.optionsContainer}>
         <h3 style={styles.optionsTitle}>Options:</h3>
         <ul style={styles.optionsList}>
@@ -142,7 +138,6 @@ const TopicDiscussion = () => {
         </ul>
       </div>
 
-      {/* Finalize Button */}
       {status === "Ongoing" && (
         <button
           style={styles.finalizeButton}
@@ -152,7 +147,6 @@ const TopicDiscussion = () => {
         </button>
       )}
 
-      {/* Comment Input */}
       <div style={styles.inputContainer}>
         <input
           type="text"
@@ -180,7 +174,6 @@ const TopicDiscussion = () => {
         </button>
       </div>
 
-      {/* Comments List */}
       <div style={styles.commentsContainer}>
         <h3 style={styles.subheader}>Comments:</h3>
         {comments.map((comment) => (
@@ -195,7 +188,6 @@ const TopicDiscussion = () => {
         ))}
       </div>
 
-      {/* Finalize Modal */}
       {showFinalizeModal && (
         <div style={styles.modal}>
           <h2>Finalize Discussion</h2>

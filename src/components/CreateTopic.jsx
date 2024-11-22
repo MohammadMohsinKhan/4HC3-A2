@@ -82,6 +82,19 @@ const CreateTopic = () => {
       alert('Topic title is required!');
       return;
     }
+    const newTopic = {
+      id: Date.now(),
+      title,
+      options,
+      status: 'Ongoing',
+      finalOption: null
+    };
+
+    const storedTopics = localStorage.getItem('topics');
+    const topics = storedTopics ? JSON.parse(storedTopics) : [];
+    topics.push(newTopic);
+    localStorage.setItem('topics', JSON.stringify(topics));
+
     alert(`Topic "${title}" created with options: ${options.join(', ')}`);
     navigate('/');
   };
