@@ -147,7 +147,7 @@ const TopicDiscussion = () => {
         </button>
       )}
 
-      <div style={styles.inputContainer}>
+      {status === "Ongoing" && (<div style={styles.inputContainer}>
         <input
           type="text"
           placeholder="Write a comment..."
@@ -172,7 +172,7 @@ const TopicDiscussion = () => {
         <button style={styles.commentButton} onClick={handleAddComment}>
           Send
         </button>
-      </div>
+      </div>)}
 
       <div style={styles.commentsContainer}>
         <h3 style={styles.subheader}>Comments:</h3>
