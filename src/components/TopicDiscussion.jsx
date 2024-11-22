@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import BackButton from '../components/BackButton';
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import BackButton from "../components/BackButton";
 
 const TopicDiscussion = () => {
   const { topicId } = useParams();
@@ -12,6 +12,7 @@ const TopicDiscussion = () => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [selectedOption, setSelectedOption] = useState("");
+  const [filterOption, setFilterOption] = useState(""); // For filtering comments
   const [status, setStatus] = useState(topic?.status || "Ongoing");
   const [finalizedOption, setFinalizedOption] = useState(topic?.finalOption || null);
   const [showFinalizeModal, setShowFinalizeModal] = useState(false);
@@ -20,7 +21,7 @@ const TopicDiscussion = () => {
   useEffect(() => {
     const storedData = JSON.parse(localStorage.getItem("topicComments")) || {};
     const topicComments = storedData[topicId];
-    
+
     if (topicComments) {
       setComments(topicComments);
     } else {
@@ -58,22 +59,14 @@ const TopicDiscussion = () => {
   };
 
   const handleFinalize = (option) => {
-    // Update the finalized option and status in the component state
     setFinalizedOption(option);
     setStatus("Finalized");
     setShowFinalizeModal(false);
-  
-    // Retrieve current topics from localStorage
+
     const storedTopics = JSON.parse(localStorage.getItem("topics")) || [];
-  
-    // Find the topic being finalized and update its status
     const updatedTopics = storedTopics.map((t) =>
-      t.title === topic.title
-        ? { ...t, status: "Finalized", finalOption: option }
-        : t
+      t.title === topic.title ? { ...t, status: "Finalized", finalOption: option } : t
     );
-  
-    // Save the updated topics back to localStorage
     localStorage.setItem("topics", JSON.stringify(updatedTopics));
   };
 
@@ -90,6 +83,13 @@ const TopicDiscussion = () => {
     };
   };
 
+  const metrics = calculateMetrics();
+
+  // Filter comments based on the selected filter option
+  const filteredComments = filterOption
+    ? comments.filter((comment) => comment.option === filterOption)
+    : comments;
+
   if (!topic) {
     return (
       <div style={styles.container}>
@@ -98,8 +98,6 @@ const TopicDiscussion = () => {
       </div>
     );
   }
-
-  const metrics = calculateMetrics();
 
   return (
     <div style={styles.container}>
@@ -132,7 +130,7 @@ const TopicDiscussion = () => {
         <ul style={styles.optionsList}>
           {topic.options.map((option, index) => (
             <li key={index} style={styles.optionItem}>
-              {option}
+              {option} - Votes: {metrics.count[option] || 0}
             </li>
           ))}
         </ul>
@@ -147,36 +145,57 @@ const TopicDiscussion = () => {
         </button>
       )}
 
-      {status === "Ongoing" && (<div style={styles.inputContainer}>
-        <input
-          type="text"
-          placeholder="Write a comment..."
-          style={styles.input}
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-        />
+      {status === "Ongoing" && (
+        <div style={styles.inputContainer}>
+          <input
+            type="text"
+            placeholder="Write a comment..."
+            style={styles.input}
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+          />
+          <select
+            style={styles.dropdown}
+            value={selectedOption}
+            onChange={(e) => setSelectedOption(e.target.value)}
+          >
+            <option value="" disabled>
+              Select an option
+            </option>
+            {topic.options.map((option, index) => (
+              <option key={index} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+          <button style={styles.commentButton} onClick={handleAddComment}>
+            Send
+          </button>
+        </div>
+      )}
+
+      <div style={styles.filterContainer}>
+        <label htmlFor="filter" style={styles.filterLabel}>
+          Filter by Option:
+        </label>
         <select
+          id="filter"
           style={styles.dropdown}
-          value={selectedOption}
-          onChange={(e) => setSelectedOption(e.target.value)}
+          value={filterOption}
+          onChange={(e) => setFilterOption(e.target.value)}
         >
-          <option value="" disabled>
-            Select an option
-          </option>
+          <option value="">All</option>
           {topic.options.map((option, index) => (
             <option key={index} value={option}>
               {option}
             </option>
           ))}
         </select>
-        <button style={styles.commentButton} onClick={handleAddComment}>
-          Send
-        </button>
-      </div>)}
+      </div>
 
       <div style={styles.commentsContainer}>
         <h3 style={styles.subheader}>Comments:</h3>
-        {comments.map((comment) => (
+        {filteredComments.map((comment) => (
           <div key={comment.id} style={styles.commentCard}>
             <p style={styles.commentAuthor}>{comment.author}</p>
             <p style={styles.commentOption}>
@@ -187,34 +206,6 @@ const TopicDiscussion = () => {
           </div>
         ))}
       </div>
-
-      {showFinalizeModal && (
-        <div style={styles.modal}>
-          <h2>Finalize Discussion</h2>
-          <p>
-            Most chosen option:{" "}
-            <strong>{metrics.mostChosenOption || "No comments yet"}</strong>
-          </p>
-          <ul style={styles.modalOptions}>
-            {topic.options.map((option, index) => (
-              <li key={index}>
-                <button
-                  style={styles.modalOptionButton}
-                  onClick={() => handleFinalize(option)}
-                >
-                  Finalize with "{option}"
-                </button>
-              </li>
-            ))}
-          </ul>
-          <button
-            style={styles.closeModalButton}
-            onClick={() => setShowFinalizeModal(false)}
-          >
-            Cancel
-          </button>
-        </div>
-      )}
     </div>
   );
 };
