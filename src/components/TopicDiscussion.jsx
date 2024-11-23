@@ -239,6 +239,9 @@ const TopicDiscussion = () => {
 };
 
 const styles = {
+  filterContainer: {
+    marginTop: '16px',
+  },
   subheader: {
     fontSize: '16px',
     color: '#333',

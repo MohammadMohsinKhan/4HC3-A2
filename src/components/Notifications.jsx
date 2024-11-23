@@ -4,9 +4,9 @@ import BackButton from './BackButton';
 // Mock notifications data
 const mockNotifications = [
   { id: 1, message: 'Alice commented on "Weekend Trip"', timestamp: '10:00 AM' },
-  { id: 2, message: 'Bob shared a new topic: "Team Lunch Ideas"', timestamp: '10:30 AM' },
-  { id: 3, message: 'Charlie voted on "Project Deadline"', timestamp: '11:00 AM' },
-  { id: 4, message: 'You were added to "Neighborhood Cleanup"', timestamp: '1:00 PM' },
+  { id: 2, message: 'Bob shared a new topic with you: "Team Lunch Ideas"', timestamp: '10:30 AM' },
+  { id: 3, message: 'Charlie commented on Weekend Trip', timestamp: '11:00 AM' },
+  { id: 4, message: 'Diana commented on "Team Lunch Ideas"', timestamp: '12:00 PM' },
 ];
 
 const styles = {
