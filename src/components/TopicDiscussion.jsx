@@ -206,6 +206,34 @@ const TopicDiscussion = () => {
           </div>
         ))}
       </div>
+
+      {showFinalizeModal && (
+        <div style={styles.modal}>
+          <h2>Finalize Discussion</h2>
+          <p>
+            Most chosen option:{" "}
+            <strong>{metrics.mostChosenOption || "No comments yet"}</strong>
+          </p>
+          <ul style={styles.modalOptions}>
+            {topic.options.map((option, index) => (
+              <li key={index}>
+                <button
+                  style={styles.modalOptionButton}
+                  onClick={() => handleFinalize(option)}
+                >
+                  Finalize with "{option}"
+                </button>
+              </li>
+            ))}
+          </ul>
+          <button
+            style={styles.closeModalButton}
+            onClick={() => setShowFinalizeModal(false)}
+          >
+            Cancel
+          </button>
+        </div>
+      )}
     </div>
   );
 };
