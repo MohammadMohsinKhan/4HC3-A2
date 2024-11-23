@@ -211,9 +211,6 @@ const TopicDiscussion = () => {
 };
 
 const styles = {
-  optionsContainer: {
-    marginBottom: '20px',
-  },
   subheader: {
     fontSize: '16px',
     color: '#333',
@@ -308,10 +305,19 @@ const styles = {
     fontSize: '14px',
   },
   dropdown: {
-    padding: '10px',
-    border: '1px solid #ddd',
-    borderRadius: '4px',
-    fontSize: '14px',
+    width: '100%', // Ensure it spans the container
+  maxWidth: '250px', // Set a reasonable max width
+  padding: '12px', // Add padding for a comfortable touch target
+  fontSize: '16px', // Increase font size for better readability
+  fontFamily: 'Arial, sans-serif', // Use a clean font
+  color: '#333', // Neutral text color
+  border: '1px solid #ccc', // Subtle border
+  borderRadius: '6px', // Rounded corners for a modern look
+  backgroundColor: '#f9f9f9', // Light background
+  boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)', // Add a slight shadow for depth
+  transition: 'all 0.3s ease', // Smooth transitions for hover/focus
+  cursor: 'pointer', // Pointer cursor for dropdown interaction
+  appearance: 'none', // Remove default browser styles
   },
   commentButton: {
     padding: '10px 16px',
