@@ -176,7 +176,7 @@ const TopicDiscussion = () => {
 
       <div style={styles.filterContainer}>
         <label htmlFor="filter" style={styles.filterLabel}>
-          Filter by Option:
+          Filter Comments by Option:
         </label>
         <select
           id="filter"
