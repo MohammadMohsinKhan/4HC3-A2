@@ -7,6 +7,7 @@ const mockNotifications = [
   { id: 2, message: 'Bob shared a new topic with you: "Team Lunch Ideas"', timestamp: '10:30 AM' },
   { id: 3, message: 'Charlie commented on Weekend Trip', timestamp: '11:00 AM' },
   { id: 4, message: 'Diana commented on "Team Lunch Ideas"', timestamp: '12:00 PM' },
+  { id: 5, message: '"Weekend Trip" has been finalized with: "Beach"', timestamp: '1:00 PM' },
 ];
 
 const styles = {
