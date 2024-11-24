@@ -337,7 +337,6 @@ const styles = {
   },
   dropdown: {
     width: '100%', // Ensure it spans the container
-  maxWidth: '250px', // Set a reasonable max width
   padding: '12px', // Add padding for a comfortable touch target
   fontSize: '16px', // Increase font size for better readability
   fontFamily: 'Arial, sans-serif', // Use a clean font
