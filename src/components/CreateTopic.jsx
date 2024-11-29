@@ -82,6 +82,12 @@ const CreateTopic = () => {
       alert('Topic title is required!');
       return;
     }
+
+    if (options.some((opt) => !opt.trim())) {
+      alert('All options must be filled!');
+      return;
+    }
+    
     const newTopic = {
       id: Date.now(),
       title,
